@@ -11,7 +11,7 @@ import {createAccountBody} from "../../models/createAccountValidator";
 import {v4 as uuidv4} from 'uuid'
 import {sign} from 'jsonwebtoken';
 import {privateKey, tokenEncryptionAlgorithm, tokenTimeout} from "../utils/definitions";
-import {JwtToken} from "../../auth/JwtToken";
+import {JwtToken} from "../../models/JwtToken";
 
 let fetchedEmails = [
     {
