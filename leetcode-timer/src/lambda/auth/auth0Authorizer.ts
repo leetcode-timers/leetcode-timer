@@ -1,11 +1,12 @@
-import {CustomAuthorizerEvent, CustomAuthorizerResult, CustomAuthorizerHandler} from "aws-lambda";
-// Use APIGatewayAuthorizerHandler
-// Use APIGatewayAuthorizerEvent
-export const handler: CustomAuthorizerHandler = async (event: CustomAuthorizerEvent): Promise<CustomAuthorizerResult> => {
+import {APIGatewayAuthorizerHandler, APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult} from "aws-lambda";
+
+export const handler: APIGatewayAuthorizerHandler = async (event: APIGatewayTokenAuthorizerEvent):
+    Promise<APIGatewayAuthorizerResult> => {
     try {
         verifyToken(event.authorizationToken);
         console.log("User was authorized");
         return {
+            //principalId: JWTToken.sub
             principalId: 'user',
             policyDocument: {
                 Version: '2012-10-17',
@@ -21,6 +22,7 @@ export const handler: CustomAuthorizerHandler = async (event: CustomAuthorizerEv
     } catch (e) {
         console.log("User was not authorized: ", e.message);
         return {
+            //principalId: JWTToken.sub
             principalId: 'user',
             policyDocument: {
                 Version: '2012-10-17',
