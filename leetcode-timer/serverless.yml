@@ -8,7 +8,7 @@ custom:
 
 plugins:
   - serverless-webpack
-
+  - serverless-offline
 provider:
   name: aws
   runtime: nodejs12.x
@@ -18,9 +18,33 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:
-  hello:
-    handler: src/lambda/http/helloWorld.handler
+  AuthJWT:
+    handler: src/lambda/auth/rs256Authorizer.handler
+  dashboard:
+    handler: src/lambda/http/dashboard.handler
     events:
       - http:
           method: get
-          path: hello
+          path: dashboard
+          cors: true
+          authorizer: AuthJWT
+  createUserByPassword:
+    handler: src/lambda/auth/createUserByEmail.handler
+    events:
+      - http:
+          method: post
+          path: create
+          cors: true
+          authorizer: Auth
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
