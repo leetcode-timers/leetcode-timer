@@ -18,6 +18,8 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
   AuthJWT:
     handler: src/lambda/auth/rs256Authorizer.handler
   dashboard:
