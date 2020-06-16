@@ -1,0 +1,57 @@
+{
+	"info": {
+		"_postman_id": "7b222957-0adb-46cf-ad98-0d8568e3bb62",
+		"name": "Leetcode Timer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sample GET",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/hello",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"hello"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "0b23250e-0ae6-4b7c-ab77-b529d2208880",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a4f3d9b8-8a4e-4b3c-9959-eec56f20ddb6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "5edcd7ed-9e7e-4946-a6ac-5014abef3c1d",
+			"key": "url",
+			"value": "https://i65gej212e.execute-api.us-east-1.amazonaws.com/dev",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
