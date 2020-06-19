@@ -1,17 +1,15 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import 'source-map-support/register';
 
-import * as middy from 'middy';
+
 import * as definitions from '../utils/definitions';
 
-import {cors, validator} from 'middy/middlewares';
-import {httpErrorHandler} from 'middy/middlewares'
-import {jsonBodyParser} from 'middy/middlewares'
 import {createAccountBody} from "../../models/createAccountValidator";
 import {v4 as uuidv4} from 'uuid'
 import {sign} from 'jsonwebtoken';
-import {privateKey, tokenEncryptionAlgorithm, tokenTimeout} from "../utils/definitions";
+import {JWTSignOptions, privateKey} from "../utils/definitions";
 import {JwtToken} from "../../models/JwtToken";
+import {middify} from "../utils/commonHandlers";
 
 let fetchedEmails = [
     {
@@ -27,7 +25,7 @@ let fetchedEmails = [
 ]
 
 
-export const handler = middy(
+let createAccount =
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
         const body = event.body
         console.log('Request Body: ', body);
@@ -53,10 +51,10 @@ export const handler = middy(
 
         // Generate the JWT token
         // Sign the JWT token and return in response
-        const jwt = sign({sub: uuid}, privateKey, signOptions) as JwtToken
+        const jwt = sign({sub: uuid}, privateKey, JWTSignOptions) as JwtToken
         return successMessage(jwt)
     }
-);
+
 
 function isEmailUsed(email: string): boolean {
     for (let entry in fetchedEmails) {
@@ -68,10 +66,6 @@ function isEmailUsed(email: string): boolean {
     return false;
 }
 
-const signOptions = {
-    algorithm: tokenEncryptionAlgorithm,
-    expiresIn: tokenTimeout
-}
 
 function successMessage(jwtToken: JwtToken): APIGatewayProxyResult {
     return {
@@ -84,9 +78,5 @@ function successMessage(jwtToken: JwtToken): APIGatewayProxyResult {
     };
 }
 
-handler
-    .use(jsonBodyParser())
-    .use(validator({inputSchema: createAccountBody}))
-    .use(httpErrorHandler())
-    .use(cors());
+export const handler = middify(createAccount, {inputSchema: createAccountBody})
 

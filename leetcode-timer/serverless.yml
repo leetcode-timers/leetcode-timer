@@ -31,7 +31,7 @@ functions:
           cors: true
           authorizer: AuthJWT
   createUserByPassword:
-    handler: src/lambda/auth/createUserByEmail.handler
+    handler: src/lambda/http/createUserByEmail.handler
     events:
       - http:
           method: post

@@ -22,10 +22,15 @@ function emailUsed(email: string): APIGatewayProxyResult {
     }
 }
 
+const JWTSignOptions = {
+    algorithm: tokenEncryptionAlgorithm,
+    expiresIn: tokenTimeout
+}
 
 export {
     emailUsed,
     tokenTimeout,
     tokenEncryptionAlgorithm,
-    privateKey
+    privateKey,
+    JWTSignOptions
 }
