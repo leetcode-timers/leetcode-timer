@@ -32,7 +32,7 @@ export const middify = (handler, expectedSchema: IValidatorOptions) => {
         .use(validator(expectedSchema))
         .onError((errorHandler, next) => {
             let details = []
-            for (let detail of errorHandler.error.details) {
+            for (let detail of errorHandler.error["details"]) {
                 details.push({
                     keyword: detail.keyword,
                     dataPath: detail.dataPath,
@@ -49,5 +49,4 @@ export const middify = (handler, expectedSchema: IValidatorOptions) => {
             return next();
         })
         .use(cors());
-
 }

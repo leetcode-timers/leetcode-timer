@@ -9,18 +9,44 @@ custom:
 plugins:
   - serverless-webpack
   - serverless-offline
+
 provider:
   name: aws
   runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-
+    createToken: ${file(configs/config.${self:provider.stage}.json):createToken}
+    publicKey: ${file(configs/config.${self:provider.stage}.json):publicKey}
+    privateKey: ${file(configs/config.${self:provider.stage}.json):privateKey}
+    GROUPS_TABLE: Groups-${self:provider.stage}
+    USERS_TABLE: Users-${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GROUPS_TABLE}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}
 functions:
-  Auth:
+  auth:
     handler: src/lambda/auth/auth0Authorizer.handler
-  AuthJWT:
+  authJWT:
     handler: src/lambda/auth/rs256Authorizer.handler
   dashboard:
     handler: src/lambda/http/dashboard.handler
@@ -29,7 +55,7 @@ functions:
           method: get
           path: dashboard
           cors: true
-          authorizer: AuthJWT
+          authorizer: authJWT
   createUserByPassword:
     handler: src/lambda/http/createUserByEmail.handler
     events:
@@ -37,7 +63,21 @@ functions:
           method: post
           path: create
           cors: true
-          authorizer: Auth
+          authorizer: auth
+  getAll:
+    handler: src/lambda/db/getAll.handler
+    events:
+      - http:
+          method: get
+          path: getall
+          cors: true
+  putSomething:
+    handler: src/lambda/db/addSomething.handler
+    events:
+      - http:
+          method: post
+          path: add
+          cors: true
 resources:
   Resources:
     GatewayResponseDefault4XX:
@@ -50,3 +90,26 @@ resources:
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: 'ApiGatewayRestApi'
+    # DynamoDB Tables
+    GroupsDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.GROUPS_TABLE}
+    UsersDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.USERS_TABLE}

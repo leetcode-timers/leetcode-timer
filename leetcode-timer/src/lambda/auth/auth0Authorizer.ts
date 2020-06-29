@@ -1,40 +1,20 @@
+'use strict'
+
 import {APIGatewayAuthorizerHandler, APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult} from "aws-lambda";
+import {authorizeUser, denyUser} from "./utils";
+import {createToken} from "../utils/exportConfig";
+
+const defaultUserId: string = '-1';
 
 export const handler: APIGatewayAuthorizerHandler = async (event: APIGatewayTokenAuthorizerEvent):
     Promise<APIGatewayAuthorizerResult> => {
     try {
         verifyToken(event.authorizationToken);
         console.log("User was authorized");
-        return {
-            //principalId: JWTToken.sub
-            principalId: 'user',
-            policyDocument: {
-                Version: '2012-10-17',
-                Statement: [
-                    {
-                        Action: 'execute-api:Invoke',
-                        Effect: 'Allow',
-                        Resource: '*'
-                    }
-                ]
-            }
-        }
+        return authorizeUser(defaultUserId);
     } catch (e) {
         console.log("User was not authorized: ", e.message);
-        return {
-            //principalId: JWTToken.sub
-            principalId: 'user',
-            policyDocument: {
-                Version: '2012-10-17',
-                Statement: [
-                    {
-                        Action: 'execute-api:Invoke',
-                        Effect: 'Deny',
-                        Resource: '*'
-                    }
-                ]
-            }
-        }
+        return denyUser(defaultUserId);
     }
 };
 
@@ -44,6 +24,6 @@ function verifyToken(authHeader: string) {
     if (!authHeader.toLocaleLowerCase().startsWith('bearer'))
         throw new Error("Invalid authorization header");
     const token = authHeader.split(' ')[1];
-    if (token != '123')
+    if (token != createToken)
         throw new Error("Invalid token");
 }

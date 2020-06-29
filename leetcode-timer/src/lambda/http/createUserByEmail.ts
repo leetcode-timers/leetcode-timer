@@ -1,79 +1,82 @@
+'use strict'
+
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
+import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 import 'source-map-support/register';
 
-
-import * as definitions from '../utils/definitions';
-
+import {internalError, errorInPut} from "../utils/definitions";
 import {createAccountBody} from "../../models/createAccountValidator";
-import {v4 as uuidv4} from 'uuid'
 import {sign} from 'jsonwebtoken';
-import {JWTSignOptions, privateKey} from "../utils/definitions";
+import {JWTSignOptions} from "../utils/definitions";
+import {privateKey} from "../utils/exportConfig";
 import {JwtToken} from "../../models/JwtToken";
 import {middify} from "../utils/commonHandlers";
+import {getMethod, putMethod} from "../db/basicTableOperations";
 
-let fetchedEmails = [
-    {
-        'id': '123',
-        'email': "nsd@grr.la",
-        'password': "nsd"
-    },
-    {
-        'id': '456',
-        "email": "jbezoz@amzn.com",
-        "password": 'jbezoz'
-    }
-]
-
+const usersTable: string = process.env.USERS_TABLE;
 
 let createAccount =
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-        const body = event.body
-        console.log('Request Body: ', body);
+        try {
+            const body = event.body
+            console.log('Request Body: ', body);
 
-        // Check if email is already present ( registered already )
-        //          if yes, then return bad request ( email already registered )
-        const email = body['email'];
-        const password = body['password']
+            // TODO Hash the username and password right its extracted from the request
+            let email: string = body['email'];
+            let password: string = body['password'];
+            let name: string = body['name'];
+            let joinedAt: string = body['joinedAt'];
 
-        if (isEmailUsed(email)) {
-            return definitions.emailUsed(email)
+            let emailInTable: DocumentClient.GetItemOutput = await getMethod(usersTable, {
+                email: email
+            });
+
+            // Email already exists in the table
+            if (emailInTable.Item !== undefined && emailInTable.Item !== null) {
+                if (emailInTable.Item['password'] === password) {
+                    return sendSuccessToken(emailInTable.Item['email']);
+                } else {
+                    return incorrectPassword();
+                }
+            }
+            // Email does not exist in the table
+            else {
+                try {
+                    await putMethod(usersTable, {
+                        email: email,
+                        password: password,
+                        name: name,
+                        joinedAt: joinedAt
+                    })
+                } catch (e) {
+                    console.log("Error in createUserByEmail: ", e.message)
+                    return internalError(errorInPut("User"));
+                }
+                return sendSuccessToken(email);
+            }
+        } catch (e) {
+            console.log("Error while creating User: ", e.message)
+            return internalError("Error while creating user. Please try again.")
         }
-
-        // Connect to the db
-        // Generate guid for the database ( from a library )
-        // Push to the user table
-        const uuid = uuidv4();
-        fetchedEmails.push({
-            "id": uuid,
-            "email": email,
-            "password": password
-        })
-
-        // Generate the JWT token
-        // Sign the JWT token and return in response
-        const jwt = sign({sub: uuid}, privateKey, JWTSignOptions) as JwtToken
-        return successMessage(jwt)
     }
 
-
-function isEmailUsed(email: string): boolean {
-    for (let entry in fetchedEmails) {
-        let fetchedEmail = fetchedEmails[entry]
-        if (email == fetchedEmail.email) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-function successMessage(jwtToken: JwtToken): APIGatewayProxyResult {
+function sendSuccessToken(subject: string): APIGatewayProxyResult {
+    const jwt = sign({sub: subject}, privateKey, JWTSignOptions) as JwtToken
     return {
         statusCode: 200,
         body: JSON.stringify({
             message: {
-                token: jwtToken
+                token: jwt
             }
+        })
+    };
+}
+
+function incorrectPassword(): APIGatewayProxyResult {
+    return {
+        statusCode: 404,
+        body: JSON.stringify({
+            message: "Incorrect password"
         })
     };
 }
