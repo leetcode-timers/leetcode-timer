@@ -4,16 +4,16 @@ import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 import 'source-map-support/register';
 
-import {internalError, errorInPut} from "../utils/definitions";
-import {createAccountBody} from "../../models/createAccountValidator";
+import {errorInPut} from "../../utils/definitions";
+import {badRequestHttpMessage, internalErrorHttpMessage} from "../../utils/statusCodeMessages";
+import {createAccountBody} from "../../../models/createAccountValidator";
 import {sign} from 'jsonwebtoken';
-import {JWTSignOptions} from "../utils/definitions";
-import {privateKey} from "../utils/exportConfig";
-import {JwtToken} from "../../models/JwtToken";
-import {middify} from "../utils/commonHandlers";
-import {getMethod, putMethod} from "../db/basicTableOperations";
-
-const usersTable: string = process.env.USERS_TABLE;
+import {JWTSignOptions} from "../../utils/definitions";
+import {privateKey, usersTable} from "../../utils/exportConfig";
+import {JwtToken} from "../../../models/JwtToken";
+import {middify} from "../../utils/commonHandlers";
+import {getMethod, putMethod} from "../../db/basicTableOperations";
+import {v4 as uuidv4} from 'uuid';
 
 let createAccount =
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -34,15 +34,24 @@ let createAccount =
             // Email already exists in the table
             if (emailInTable.Item !== undefined && emailInTable.Item !== null) {
                 if (emailInTable.Item['password'] === password) {
-                    return sendSuccessToken(emailInTable.Item['email']);
+                    let jwtSub = JSON.stringify({
+                        id: emailInTable.Item['id'],
+                        email: emailInTable.Item['email']
+                    });
+                    return sendSuccessToken(jwtSub, "User logged in successfully.");
                 } else {
                     return incorrectPassword();
                 }
             }
             // Email does not exist in the table
             else {
+                const uuid = uuidv4();
                 try {
+                    if (name === undefined || name === null || joinedAt === undefined || joinedAt === null) {
+                        return badRequestHttpMessage("Attempting to create user without name or joinedAt")
+                    }
                     await putMethod(usersTable, {
+                        id: uuid,
                         email: email,
                         password: password,
                         name: name,
@@ -50,31 +59,34 @@ let createAccount =
                     })
                 } catch (e) {
                     console.log("Error in createUserByEmail: ", e.message)
-                    return internalError(errorInPut("User"));
+                    return internalErrorHttpMessage(errorInPut("User"));
                 }
-                return sendSuccessToken(email);
+                let jwtSub = JSON.stringify({
+                    id: uuid,
+                    email: email
+                });
+                return sendSuccessToken(jwtSub, "User created successfully.");
             }
         } catch (e) {
             console.log("Error while creating User: ", e.message)
-            return internalError("Error while creating user. Please try again.")
+            return internalErrorHttpMessage("Error while creating user. Please try again.")
         }
     }
 
-function sendSuccessToken(subject: string): APIGatewayProxyResult {
+function sendSuccessToken(subject: string, message: string): APIGatewayProxyResult {
     const jwt = sign({sub: subject}, privateKey, JWTSignOptions) as JwtToken
     return {
-        statusCode: 200,
+        statusCode: 201,
         body: JSON.stringify({
-            message: {
-                token: jwt
-            }
+            message: message,
+            token: jwt
         })
     };
 }
 
 function incorrectPassword(): APIGatewayProxyResult {
     return {
-        statusCode: 404,
+        statusCode: 401,
         body: JSON.stringify({
             message: "Incorrect password"
         })

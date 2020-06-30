@@ -7,7 +7,9 @@ export const createAccountBody = {
             type: 'object',
             properties: {
                 email: {type: 'string', maxLength: 254, pattern: emailRegEx},
-                password: {type: 'string', minLength: 6, maxLength: 32}
+                password: {type: 'string', minLength: 6, maxLength: 32},
+                name: {type: 'string', maxLength: 48},
+                joinedAt: {type: 'string'}
             },
             required: ['email', 'password']
         }

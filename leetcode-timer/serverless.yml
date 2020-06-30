@@ -13,17 +13,20 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'v1'}
   region: ${opt:region, 'us-east-1'}
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    apiVersion: v1
     createToken: ${file(configs/config.${self:provider.stage}.json):createToken}
     publicKey: ${file(configs/config.${self:provider.stage}.json):publicKey}
     privateKey: ${file(configs/config.${self:provider.stage}.json):privateKey}
     GROUPS_TABLE: Groups-${self:provider.stage}
     USERS_TABLE: Users-${self:provider.stage}
+    SOLVES_TABLE: Solves-${self:provider.stage}
+
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -43,6 +46,16 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.SOLVES_TABLE}
+
 functions:
   auth:
     handler: src/lambda/auth/auth0Authorizer.handler
@@ -56,14 +69,46 @@ functions:
           path: dashboard
           cors: true
           authorizer: authJWT
-  createUserByPassword:
-    handler: src/lambda/http/createUserByEmail.handler
+  createUser:
+    handler: src/lambda/http/user/createUser.handler
     events:
       - http:
           method: post
-          path: create
+          path: users
           cors: true
           authorizer: auth
+  getUser:
+    handler: src/lambda/http/user/getUser.handler
+    events:
+      - http:
+          method: get
+          path: users/{userId}
+          cors: true
+          authorizer: authJWT
+  getUsers:
+    handler: src/lambda/http/user/getUsers.handler
+    events:
+      - http:
+          method: get
+          path: users
+          cors: true
+          authorizer: authJWT
+  deleteUser:
+    handler: src/lambda/http/user/deleteUser.handler
+    events:
+      - http:
+          method: delete
+          path: users/{userId}
+          cors: true
+          authorizer: authJWT
+  solveQuestion:
+    handler: src/lambda/http/solves/userSolvesQuestion.handler
+    events:
+      - http:
+          method: post
+          path: users/{userId}/question/{questionId}
+          cors: true
+#          authorizer: authJWT
   getAll:
     handler: src/lambda/db/getAll.handler
     events:
@@ -113,3 +158,18 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.USERS_TABLE}
+    SolvesDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: questionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: questionId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.SOLVES_TABLE}

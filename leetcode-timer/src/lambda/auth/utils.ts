@@ -1,6 +1,7 @@
 'use strict'
 
 function authorizeUser(id: string): any {
+    console.log("In authorizeUser: id: ", id);
     return {
         principalId: id,
         policyDocument: {

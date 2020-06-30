@@ -1,10 +1,13 @@
+const privateKey: string = process.env.privateKey;
+const publicKey: string = process.env.publicKey;
+const createToken: string = process.env.createToken;
+const usersTable: string = process.env.USERS_TABLE;
+const solvesTable: string = process.env.SOLVES_TABLE;
 
-const privateKey = process.env.privateKey;
-const publicKey = process.env.publicKey;
-const createToken = process.env.createToken;
-
-export{
+export {
     privateKey,
     publicKey,
-    createToken
+    createToken,
+    usersTable,
+    solvesTable
 }

@@ -14,6 +14,7 @@ export const handler: APIGatewayAuthorizerHandler = async (event: APIGatewayToke
     try {
         const jwtToken = verifyToken(event.authorizationToken);
         console.log("User was authorized");
+        console.log(jwtToken);
         return authorizeUser(jwtToken.sub)
     } catch (e) {
         console.log("User was not authorized: ", e.message);
