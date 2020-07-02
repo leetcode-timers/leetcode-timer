@@ -3,7 +3,7 @@
 import {APIGatewayAuthorizerHandler, APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult} from "aws-lambda";
 import {verify} from 'jsonwebtoken';
 import {JwtToken} from "../../models/JwtToken";
-import {tokenEncryptionAlgorithm} from "../utils/definitions";
+import {tokenEncryptionAlgorithm} from "../utils/tokenManagement";
 import {authorizeUser, denyUser} from "./utils";
 import {publicKey} from "../utils/exportConfig";
 
@@ -29,7 +29,6 @@ function verifyToken(authHeader: string): JwtToken {
         throw new Error("Invalid authorization header");
     const token = authHeader.split(' ')[1];
     // If issuedAt is greater than current time
-    // If expiredAt is less than current time
     return verify(token, publicKey, {algorithms: [tokenEncryptionAlgorithm]}) as JwtToken
 }
 

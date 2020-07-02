@@ -3,7 +3,7 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import 'source-map-support/register';
 import {middify} from "../utils/commonHandlers";
-import {internalError} from "../utils/definitions";
+import {internalErrorHttpMessage} from "../utils/statusCodeMessages";
 import {getMethod} from "./basicTableOperations";
 
 const groupsTable = process.env.GROUPS_TABLE;
@@ -44,7 +44,7 @@ let db =
             };
         } catch (e) {
             console.log("Error in dashboard: ", e.message);
-            return internalError("Error in dashboard")
+            return internalErrorHttpMessage("Error in dashboard")
         }
     }
 export const handler = middify(db, {})

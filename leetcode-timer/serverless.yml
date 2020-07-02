@@ -68,7 +68,7 @@ functions:
           method: get
           path: dashboard
           cors: true
-          authorizer: authJWT
+#          authorizer: authJWT
   createUser:
     handler: src/lambda/http/user/createUser.handler
     events:
@@ -108,7 +108,23 @@ functions:
           method: post
           path: users/{userId}/question/{questionId}
           cors: true
-#          authorizer: authJWT
+          authorizer: authJWT
+  getAttemptedQuestions:
+    handler: src/lambda/http/solves/getAttemptedQuestions.handler
+    events:
+      - http:
+          method: get
+          path: users/{userId}/questions
+          cors: true
+          authorizer: authJWT
+  getAttempts:
+    handler: src/lambda/http/solves/getAttempts.handler
+    events:
+      - http:
+          method: get
+          path: users/{userId}/questions/{questionId}
+          cors: true
+          authorizer: authJWT
   getAll:
     handler: src/lambda/db/getAll.handler
     events:

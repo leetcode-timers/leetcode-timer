@@ -12,6 +12,8 @@ import {
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 import {getMethod} from "../../db/basicTableOperations";
 import {usersTable} from "../../utils/exportConfig";
+import {getUpdatedToken} from "../../utils/tokenManagement";
+import {tokenUpdateDeltaInSecs} from "../../utils/tokenManagement";
 
 let dashboard =
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -30,13 +32,14 @@ let dashboard =
                 email: email
             });
             if (emailInTable.Item !== undefined && emailInTable.Item !== null) {
-                return statusOkHttpMessageObject(emailInTable.Item)
+                return statusOkHttpMessageObject(emailInTable.Item,
+                    getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs));
             }
             return notFoundHttpMessage("Given user not found.");
 
         } catch (e) {
-            console.log("Error in dashboard: ", e.message);
-            return internalErrorHttpMessage("Error in dashboard")
+            console.log("Error in getUser: ", e.message);
+            return internalErrorHttpMessage("Error in getUser")
         }
     }
 

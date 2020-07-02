@@ -4,11 +4,11 @@ import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 import 'source-map-support/register';
 
-import {errorInPut} from "../../utils/definitions";
+import {errorInPut} from "../../utils/constants";
 import {badRequestHttpMessage, internalErrorHttpMessage} from "../../utils/statusCodeMessages";
-import {createAccountBody} from "../../../models/createAccountValidator";
+import {createAccountBody} from "../../../models/validators/user/createAccountValidator";
 import {sign} from 'jsonwebtoken';
-import {JWTSignOptions} from "../../utils/definitions";
+import {JWTSignOptions} from "../../utils/tokenManagement";
 import {privateKey, usersTable} from "../../utils/exportConfig";
 import {JwtToken} from "../../../models/JwtToken";
 import {middify} from "../../utils/commonHandlers";
@@ -93,5 +93,5 @@ function incorrectPassword(): APIGatewayProxyResult {
     };
 }
 
-export const handler = middify(createAccount, {inputSchema: createAccountBody})
+export const handler = middify(createAccount, {inputSchema: createAccountBody});
 

@@ -45,11 +45,13 @@ function statusOkHttpMessage(message: string): APIGatewayProxyResult {
     }
 }
 
-function statusOkHttpMessageObject(returnObject: object): APIGatewayProxyResult {
+function statusOkHttpMessageObject(returnObject: object, token: string): APIGatewayProxyResult {
     return {
         statusCode: 200,
         body: JSON.stringify({
-            ...returnObject
+            token: token,
+            result: returnObject
+            // ...returnObject
         }, null, 2),
     };
 }

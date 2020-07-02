@@ -14,4 +14,5 @@ export const createAccountBody = {
             required: ['email', 'password']
         }
     }
+
 }

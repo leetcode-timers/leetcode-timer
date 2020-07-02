@@ -43,7 +43,7 @@ let updateToList = async (tableName: string, key: object, attriName: string, att
     return await docClient.update({
         TableName: tableName,
         Key: key,
-        UpdateExpression: 'SET #attrName = list_append(#attrName, :attrVal)',
+        UpdateExpression: 'SET #attrName = list_append(:attrVal, #attrName)',
         ExpressionAttributeNames: {
             '#attrName': attriName
         },

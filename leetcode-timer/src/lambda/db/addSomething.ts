@@ -3,9 +3,9 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import 'source-map-support/register';
 import {middify} from "../utils/commonHandlers";
-import {internalError} from "../utils/definitions";
+import {internalErrorHttpMessage} from "../utils/statusCodeMessages";
 import {putMethod} from "./basicTableOperations";
-import {errorInPut} from "../utils/definitions";
+import {errorInPut} from "../utils/constants";
 
 const groupsTable: string = process.env.GROUPS_TABLE;
 
@@ -35,7 +35,7 @@ let db =
                 await putMethod(groupsTable, newItem);
             } catch (e) {
                 console.log("Error in addSomething.ts: ", e.message)
-                return internalError(errorInPut("User"));
+                return internalErrorHttpMessage(errorInPut("User"));
             }
 
             return {
@@ -47,7 +47,7 @@ let db =
             };
         } catch (e) {
             console.log("Error in dashboard: ", e.message);
-            return internalError("Error in dashboard")
+            return internalErrorHttpMessage("Error in dashboard")
         }
     }
 export const handler = middify(db, {})
