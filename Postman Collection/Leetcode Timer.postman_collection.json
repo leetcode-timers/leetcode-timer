@@ -6,17 +6,235 @@
 	},
 	"item": [
 		{
-			"name": "Sample GET",
+			"name": "POST User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 123",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"nachi@google.com\",\r\n    \"password\": \"thisIsMyPassword\",\r\n    \"name\": \"Nachiket Dhamankar\",\r\n    \"joinedAt\": \"TODAY\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{remoteUrl}}/users",
+					"host": [
+						"{{remoteUrl}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ7XCJpZFwiOlwiODlkMGM3ZDEtNTEzNi00YjRlLWJkZDktMTQ1NmVlYTcwMzZmXCIsXCJlbWFpbFwiOlwibmFjaGlAZ29vZ2xlLmNvbVwifSIsImlhdCI6MTU5MzcwNzEzOSwiZXhwIjoxNTkzNzA3MjU5fQ.jqW9oIqCtZxsbtfESCP_oysalfrSmIkgGWgPiNocbZ-hDM4YpwQ15juXof3gOIxmSNpEgArko-5m24lmFcd_UA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{remoteUrl}}/users/nachi@google.com",
+					"host": [
+						"{{remoteUrl}}"
+					],
+					"path": [
+						"users",
+						"nachi@google.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Users",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ7XCJpZFwiOlwiY2Y4MWQ3NTUtYjk2YS00ZmZjLWEwZDYtMDE2N2RmZTA0ZTgyXCIsXCJlbWFpbFwiOlwibnNkQGdvb2dsZS5jb21cIn0iLCJpYXQiOjE1OTM0NDgyMTgsImV4cCI6MTU5MzQ0ODMzOH0.spq5ixCR7RucKqF-QY7agGERIQMiKks1Zmzu62PAamlD4RMiYYAzhSA2OlOSgFY8qJRVQhPk6F78pvmthU71cA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{remoteUrl}}/users",
+					"host": [
+						"{{remoteUrl}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE User",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuc2QxQGdvb2dsZS5jb20iLCJpYXQiOjE1OTM0NDE3NTgsImV4cCI6MTU5MzQ0MTg3OH0.cr52MKhBBuVaz5d4KRCEJGsBarOFmxwNbV8lm-UooPjtlHA81IZPYwWHsFlbnUdFjT5ASd_XBavhMN_t8MjuQA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{remoteUrl}}/users/nsd@google.com",
+					"host": [
+						"{{remoteUrl}}"
+					],
+					"path": [
+						"users",
+						"nsd@google.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Dashboard",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuc2QxQGdvb2dsZS5jb20iLCJpYXQiOjE1OTM0MDQ1OTgsImV4cCI6MTU5MzQwNDcxOH0.2sPDz6U40wm0P63MGWMu9etA3InQfR5odovKxNTXe48USw1ta3kTJJo1Nj2rVYhzUN-54HkDoakseWwwjSF0qw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{remoteUrl}}/dashboard",
+					"host": [
+						"{{remoteUrl}}"
+					],
+					"path": [
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET DB",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/hello",
+					"raw": "https://kcmbejo2n3.execute-api.us-east-1.amazonaws.com/dev/getall",
+					"protocol": "https",
 					"host": [
-						"{{url}}"
+						"kcmbejo2n3",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
 					],
 					"path": [
-						"hello"
+						"dev",
+						"getall"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Attempt Question",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ7XCJpZFwiOlwiNmViMDUzMGEtMWZkNC00ZDFmLTk5MjEtY2Q2ZjFkN2NjMmUxXCIsXCJlbWFpbFwiOlwibmFjaGlAZmIuY29tXCJ9IiwiaWF0IjoxNTk0MDA2MTYyLCJleHAiOjE1OTQwMDYyODJ9.ZrbSsrc26RE9PT62UQxnizZqGPVYtrfII6tLzLVmj3d-GXlXwwPDmHYiT8iK6PuNcsJZkINhs1EZBhUgCgCh4g",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"tackledAt\": \"1593706593\",\r\n    \"duration\": \"14\",\r\n    \"outcome\": \"SUCCESS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{remoteUrl}}/users/nachi@fb.com/question/1",
+					"host": [
+						"{{remoteUrl}}"
+					],
+					"path": [
+						"users",
+						"nachi@fb.com",
+						"question",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Attempted Questions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ7XCJpZFwiOlwiNmViMDUzMGEtMWZkNC00ZDFmLTk5MjEtY2Q2ZjFkN2NjMmUxXCIsXCJlbWFpbFwiOlwibmFjaGlAZmIuY29tXCJ9IiwiaWF0IjoxNTk0MDA2MTYyLCJleHAiOjE1OTQwMDYyODJ9.ZrbSsrc26RE9PT62UQxnizZqGPVYtrfII6tLzLVmj3d-GXlXwwPDmHYiT8iK6PuNcsJZkINhs1EZBhUgCgCh4g",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{remoteUrl}}/users/nachi@fb.com/questions",
+					"host": [
+						"{{remoteUrl}}"
+					],
+					"path": [
+						"users",
+						"nachi@fb.com",
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Attempts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ7XCJpZFwiOlwiNmViMDUzMGEtMWZkNC00ZDFmLTk5MjEtY2Q2ZjFkN2NjMmUxXCIsXCJlbWFpbFwiOlwibmFjaGlAZmIuY29tXCJ9IiwiaWF0IjoxNTk0MDA2MTYyLCJleHAiOjE1OTQwMDYyODJ9.ZrbSsrc26RE9PT62UQxnizZqGPVYtrfII6tLzLVmj3d-GXlXwwPDmHYiT8iK6PuNcsJZkINhs1EZBhUgCgCh4g",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{remoteUrl}}/users/nachi@fb.com/questions/12",
+					"host": [
+						"{{remoteUrl}}"
+					],
+					"path": [
+						"users",
+						"nachi@fb.com",
+						"questions",
+						"12"
 					]
 				}
 			},
@@ -47,10 +265,24 @@
 	],
 	"variable": [
 		{
-			"id": "5edcd7ed-9e7e-4946-a6ac-5014abef3c1d",
-			"key": "url",
-			"value": "https://i65gej212e.execute-api.us-east-1.amazonaws.com/dev",
-			"type": "string"
+			"id": "1936a7d9-2b43-4b60-837a-77418b7ef9a2",
+			"key": "localhost",
+			"value": "http://localhost:3000"
+		},
+		{
+			"id": "47334b21-fa3c-466c-adc8-878758d35970",
+			"key": "stage",
+			"value": "dev"
+		},
+		{
+			"id": "8a9f2e97-ca80-4bbe-836a-fd0517ca5e24",
+			"key": "localurl",
+			"value": "{{localhost}}/{{stage}}"
+		},
+		{
+			"id": "0c55e2bf-bd9e-4068-81d3-3129f00ec82f",
+			"key": "remoteUrl",
+			"value": "https://2cgri8aetl.execute-api.us-east-1.amazonaws.com/v1"
 		}
 	],
 	"protocolProfileBehavior": {}
