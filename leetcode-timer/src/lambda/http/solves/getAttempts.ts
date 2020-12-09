@@ -3,7 +3,11 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import 'source-map-support/register';
 import {middify} from "../../utils/commonHandlers";
-import {internalErrorHttpMessage, statusOkHttpMessageObject} from "../../utils/statusCodeMessages";
+import {
+    internalErrorHttpMessage,
+    statusOkHttpMessageObject,
+    unauthorizedHttpMessage
+} from "../../utils/statusCodeMessages";
 import {solvesTable} from "../../utils/exportConfig";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 import {getWithProjection} from "../../db/basicTableOperations";
@@ -22,7 +26,11 @@ let dashboard =
             let userId = event.pathParameters.userId;
             let questionId = event.pathParameters.questionId;
 
-            // TODO Check if the email and cookie match
+            // Logged in user and cookie don't match
+            let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
+            if (userId !== principalObject['email']) {
+                return unauthorizedHttpMessage("Tch, tch. Request to get another user's attempts. Please check the email and credentials.")
+            }
 
             const result: DocumentClient.GetItemOutput = await getWithProjection(solvesTable, {
                 userId: userId,

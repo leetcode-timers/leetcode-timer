@@ -47,8 +47,11 @@ let createAccount =
             else {
                 const uuid = uuidv4();
                 try {
-                    if (name === undefined || name === null || joinedAt === undefined || joinedAt === null) {
-                        return badRequestHttpMessage("Attempting to create user without name or joinedAt")
+                    if (name === undefined || name === null) {
+                        return badRequestHttpMessage("Attempting to create user without name")
+                    }
+                    if ( joinedAt === undefined || joinedAt === null){
+                        return badRequestHttpMessage("Attempting to create user without joinedAt")
                     }
                     await putMethod(usersTable, {
                         id: uuid,

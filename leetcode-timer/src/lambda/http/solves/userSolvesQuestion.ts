@@ -27,15 +27,14 @@ let dashboard =
             console.log("UserId: " + userId + ", questionId: " + questionId + " localAttempt: "
                 + JSON.stringify(userAttempt));
 
-            // TODO Check if the email and cookie match
-            let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
             // Logged in user and cookie don't match
+            let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
             if (userId !== principalObject['email']) {
-                return unauthorizedHttpMessage("Tch, tch. Don't delete someone else's account.")
+                return unauthorizedHttpMessage("Tch, tch. Request to add attempt to another user. Please check the email and credentials.")
             }
 
             if (await isQuestionAttempted(userId, questionId)) {
-                return await solveQuestionFirst(userId, questionId, userAttempt, event);
+                return await solveFirstAttempt(userId, questionId, userAttempt, event);
             } else {
                 return await addAttempt(userId, questionId, userAttempt, event);
             }
@@ -49,7 +48,7 @@ function isEmptyObject(obj: object): boolean {
     return !Object.keys(obj).length;
 }
 
-let solveQuestionFirst = async (userId: string, questionId: string, userAttempt: any, event: APIGatewayProxyEvent):
+let solveFirstAttempt = async (userId: string, questionId: string, userAttempt: any, event: APIGatewayProxyEvent):
     Promise<APIGatewayProxyResult> => {
     let newItem = {
         userId: userId,
@@ -60,7 +59,6 @@ let solveQuestionFirst = async (userId: string, questionId: string, userAttempt:
     }
     try {
         await putMethod(solvesTable, newItem);
-        // return statusOkHttpMessage("Added successfully: " + newItem);
         return statusOkHttpMessageObject({
             message: "Attempt Successfully recorded: " + JSON.stringify(userAttempt)
         }, getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
@@ -93,4 +91,3 @@ let isQuestionAttempted = async (userId: string, questionId: string): Promise<bo
     return result === undefined || result === null || isEmptyObject(result)
 }
 export const handler = middify(dashboard, {inputSchema: solvesBody});
-
