@@ -765,19 +765,6 @@ URL: https://7tfop0xwsg.execute-api.us-east-1.amazonaws.com/v1/users
 
 <br>
 
-
-
-***Available Variables:***
-
-| Key | Value | Type |
-| --- | ------|-------------|
-| localhost | http://localhost:3000 |  |
-| stage | dev |  |
-| localurl | http://localhost:3000/local |  |
-| remoteUrl | https://7tfop0xwsg.execute-api.us-east-1.amazonaws.com/v1 |  |
-
-
-
 ---
 [Back to top](#leetcode-timer)
 > Made with &#9829; by [thedevsaddam](https://github.com/thedevsaddam) | Generated at: 2020-12-08 19:23:38 by [docgen](https://github.com/thedevsaddam/docgen)
