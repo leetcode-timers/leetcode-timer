@@ -9,6 +9,7 @@ const defaultUserId: string = '-1';
 export const handler: APIGatewayAuthorizerHandler = async (event: APIGatewayTokenAuthorizerEvent):
     Promise<APIGatewayAuthorizerResult> => {
     try {
+        console.log("Event: ", event)
         verifyToken(event.authorizationToken);
         console.log("User was authorized");
         return authorizeUser(defaultUserId);

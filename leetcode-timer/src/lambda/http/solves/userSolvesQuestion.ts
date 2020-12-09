@@ -76,7 +76,6 @@ let addAttempt = async (userId: string, questionId: string, userAttempt: any, ev
             userId: userId,
             questionId: questionId
         }, "attempts", userAttempt, 'ALL_OLD');
-        // return statusOkHttpMessage("Attempt Successfully recorded: " + JSON.stringify(userAttempt));
         return statusOkHttpMessageObject({
             message: "Attempt Successfully recorded: " + JSON.stringify(userAttempt)
         }, getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))

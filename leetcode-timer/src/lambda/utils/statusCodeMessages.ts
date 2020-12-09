@@ -51,7 +51,6 @@ function statusOkHttpMessageObject(returnObject: object, token: string): APIGate
         body: JSON.stringify({
             token: token,
             result: returnObject
-            // ...returnObject
         }, null, 2),
     };
 }

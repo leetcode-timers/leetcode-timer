@@ -3,7 +3,7 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import 'source-map-support/register';
 import {middify} from "../utils/commonHandlers";
-import {internalErrorHttpMessage} from "../utils/statusCodeMessages";
+import {badRequestHttpMessage} from "../utils/statusCodeMessages";
 import {getUpdatedToken} from "../utils/tokenManagement";
 
 let dashboard =
@@ -21,7 +21,7 @@ let dashboard =
             };
         } catch (e) {
             console.log("Error in dashboard: ", e.message);
-            return internalErrorHttpMessage("Error in dashboard")
+            return badRequestHttpMessage("Error in dashboard")
         }
     }
 
