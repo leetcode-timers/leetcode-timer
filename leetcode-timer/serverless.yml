@@ -1,3 +1,5 @@
+org: rtrnachiket
+app: leetcode-timer-app
 service:
   name: leetcode-timer
 
@@ -8,7 +10,6 @@ custom:
 
 plugins:
   - serverless-webpack
-  - serverless-offline
 
 provider:
   name: aws
