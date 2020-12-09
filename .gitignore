@@ -2,7 +2,7 @@
 Nachi Notes/NachiResources.md
 leetcode-timer/.vscode
 leetcode-timer/lib/*
-
+*/.build
 # Logs
 logs
 *.log
