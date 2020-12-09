@@ -69,7 +69,7 @@ functions:
           method: get
           path: dashboard
           cors: true
-#          authorizer: authJWT
+  #          authorizer: authJWT
   createUser:
     handler: src/lambda/http/user/createUser.handler
     events:
@@ -126,20 +126,6 @@ functions:
           path: users/{userId}/questions/{questionId}
           cors: true
           authorizer: authJWT
-  getAll:
-    handler: src/lambda/db/getAll.handler
-    events:
-      - http:
-          method: get
-          path: getall
-          cors: true
-  putSomething:
-    handler: src/lambda/db/addSomething.handler
-    events:
-      - http:
-          method: post
-          path: add
-          cors: true
 resources:
   Resources:
     GatewayResponseDefault4XX:
