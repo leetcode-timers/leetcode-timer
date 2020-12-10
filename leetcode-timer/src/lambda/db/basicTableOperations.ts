@@ -38,8 +38,22 @@ let getWithProjection = async (tableName: string, key: object, projectionExpress
         ProjectionExpression: projectionExpression
     }).promise();
 }
+let updateItem = async (tableName: string, key: object, attriName: string, attriVal: string, returnVal: string): Promise<DocumentClient.UpdateItemOutput> => {
+    return await docClient.update({
+        TableName: tableName,
+        Key: key,
+        UpdateExpression: 'SET #attrName = :attrVal',
+        ExpressionAttributeNames: {
+            '#attrName': attriName,
+        },
+        ExpressionAttributeValues: {
+            ':attrVal': attriVal
+        },
+        ReturnValues: returnVal
+    }).promise();
 
-let updateToList = async (tableName: string, key: object, attriName: string, attriVal: any, returnVal: string): Promise<DocumentClient.UpdateItemOutput> => {
+}
+let appendToList = async (tableName: string, key: object, attriName: string, attriVal: any, returnVal: string): Promise<DocumentClient.UpdateItemOutput> => {
     return await docClient.update({
         TableName: tableName,
         Key: key,
@@ -60,5 +74,6 @@ export {
     getMethod,
     getWithProjection,
     deleteMethod,
-    updateToList
+    appendToList,
+    updateItem
 }

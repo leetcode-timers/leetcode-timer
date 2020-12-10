@@ -10,7 +10,7 @@ import {
 } from "../../utils/statusCodeMessages";
 import {solvesTable} from "../../utils/exportConfig";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
-import {getWithProjection, putMethod, updateToList} from "../../db/basicTableOperations";
+import {getWithProjection, putMethod, appendToList} from "../../db/basicTableOperations";
 import {solvesBody} from "../../../models/validators/solves/solvesValidator";
 import {getUpdatedToken} from "../../utils/tokenManagement";
 import {tokenUpdateDeltaInSecs} from "../../utils/tokenManagement";
@@ -70,7 +70,7 @@ let solveFirstAttempt = async (userId: string, questionId: string, userAttempt: 
 let addAttempt = async (userId: string, questionId: string, userAttempt: any, event: APIGatewayProxyEvent):
     Promise<APIGatewayProxyResult> => {
     try {
-        await updateToList(solvesTable, {
+        await appendToList(solvesTable, {
             userId: userId,
             questionId: questionId
         }, "attempts", userAttempt, 'ALL_OLD');

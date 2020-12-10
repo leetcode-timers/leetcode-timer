@@ -17,27 +17,17 @@ provider:
   stage: ${opt:stage, 'v1'}
   region: ${opt:region, 'us-east-1'}
   apiGateway:
-    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+    minimumCompressionSize: 1024
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     apiVersion: v1
     createToken: ${file(configs/config.${self:provider.stage}.json):createToken}
     publicKey: ${file(configs/config.${self:provider.stage}.json):publicKey}
     privateKey: ${file(configs/config.${self:provider.stage}.json):privateKey}
-    GROUPS_TABLE: Groups-${self:provider.stage}
     USERS_TABLE: Users-${self:provider.stage}
     SOLVES_TABLE: Solves-${self:provider.stage}
 
   iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.GROUPS_TABLE}
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -62,6 +52,7 @@ functions:
     handler: src/lambda/auth/auth0Authorizer.handler
   authJWT:
     handler: src/lambda/auth/rs256Authorizer.handler
+
   dashboard:
     handler: src/lambda/http/dashboard.handler
     events:
@@ -69,7 +60,8 @@ functions:
           method: get
           path: dashboard
           cors: true
-  #          authorizer: authJWT
+          authorizer: authJWT
+
   createUser:
     handler: src/lambda/http/user/createUser.handler
     events:
@@ -86,14 +78,6 @@ functions:
           path: users/{userId}
           cors: true
           authorizer: authJWT
-  getUsers:
-    handler: src/lambda/http/user/getUsers.handler
-    events:
-      - http:
-          method: get
-          path: users
-          cors: true
-          authorizer: authJWT
   deleteUser:
     handler: src/lambda/http/user/deleteUser.handler
     events:
@@ -102,6 +86,15 @@ functions:
           path: users/{userId}
           cors: true
           authorizer: authJWT
+  updateUser:
+    handler: src/lambda/http/user/updateUser.handler
+    events:
+      - http:
+          method: put
+          path: users/{userId}
+          cors: true
+          authorizer: authJWT
+
   solveQuestion:
     handler: src/lambda/http/solves/userSolvesQuestion.handler
     events:
@@ -126,8 +119,10 @@ functions:
           path: users/{userId}/questions/{questionId}
           cors: true
           authorizer: authJWT
+
 resources:
   Resources:
+
     GatewayResponseDefault4XX:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
@@ -138,18 +133,7 @@ resources:
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: 'ApiGatewayRestApi'
-    # DynamoDB Tables
-    GroupsDynamoDBTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.GROUPS_TABLE}
+
     UsersDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:

@@ -21,7 +21,6 @@ let createAccount =
             const body = event.body
             console.log('Request Body: ', body);
 
-            // TODO Hash the username and password right its extracted from the request
             let email: string = body['email'];
             let password: string = body['password'];
             let name: string = body['name'];

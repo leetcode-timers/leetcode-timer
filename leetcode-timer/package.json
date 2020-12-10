@@ -30,6 +30,6 @@
     "webpack": "^4.29.0",
     "webpack-node-externals": "^1.7.2"
   },
-  "author": "Nachiket D, Saikat M",
+  "author": "Nachiket D",
   "license": "MIT"
 }

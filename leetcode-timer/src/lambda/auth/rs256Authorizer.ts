@@ -28,7 +28,6 @@ function verifyToken(authHeader: string): JwtToken {
     if (!authHeader.toLocaleLowerCase().startsWith('bearer'))
         throw new Error("Invalid authorization header");
     const token = authHeader.split(' ')[1];
-    // If issuedAt is greater than current time
     return verify(token, publicKey, {algorithms: [tokenEncryptionAlgorithm]}) as JwtToken
 }
 
