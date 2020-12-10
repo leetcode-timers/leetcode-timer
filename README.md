@@ -31,9 +31,9 @@ Do you know why I absolutely love this project?
 You're reading on! You rock!
 ##### The Pyaar ki Wajah ( Reason for love )
 
-I told this idea to my roommate and we set up a [repo](https://github.com/m7saikat/leetcode-timed-prep) (currently private, but request access if you'd like!) app on May 1, 2020. A few weeks later, we saw the same feature request on Leetcode with over 3.7k upvotes.
+I told this idea to my roommate and we set up a [repo](https://github.com/m7saikat/leetcode-timed-prep) (currently private, but request access if you'd like!) app on May 1, 2020. 11 days later, we saw the same [feature request](https://leetcode.com/discuss/general-discussion/626102/LeetCode-Suggestion%3A-Timer-to-track-time-spend-on-a-problem) on Leetcode with over 850+ votes.
 
-So every time I'm working on this project, I feel like I'm making 3699 lives easier, yay!
+So every time I'm working on this project, I feel like I'm making at least 849 lives easier, yay!
 
 ___
 As always, I love suggestions ( or appreciation ). Reach me out on twitter [@nachiketsd](https://twitter.com/NachiketSD) or connect with me on LinkedIn [@nachiketdhamankar](https://www.linkedin.com/in/nachiket-dhamankar)
