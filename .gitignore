@@ -3,6 +3,8 @@ Nachi Notes/NachiResources.md
 leetcode-timer/.vscode
 leetcode-timer/lib/*
 */.build
+leetcode-timer/configs/*
+
 # Logs
 logs
 *.log
