@@ -121,3 +121,5 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
+/leetcode-timer/configs/
+/leetcode-timer/configs/
