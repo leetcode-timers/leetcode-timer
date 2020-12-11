@@ -4,7 +4,7 @@
   "description": "Serverless webpack example using Typescript",
   "main": "handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/server_tests/dashboard.js",
     "start": "sls offline -v",
     "deploy": "serverless deploy -v"
   },
@@ -12,6 +12,7 @@
     "chai-http": "^4.3.0",
     "jsonwebtoken": "^8.5.1",
     "middy": "^0.36.0",
+    "mocha": "^8.2.1",
     "source-map-support": "^0.5.10",
     "supertest": "^6.0.1",
     "uuid": "^8.2.0"
