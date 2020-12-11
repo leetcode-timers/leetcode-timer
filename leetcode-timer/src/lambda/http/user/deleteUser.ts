@@ -3,7 +3,7 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import 'source-map-support/register';
 import {middify} from "../../utils/commonHandlers";
-import {deleteMethod} from "../../db/basicTableOperations";
+import {deleteMethod} from "../../dao/tableOperations";
 import {usersTable} from "../../utils/exportConfig";
 import {unauthorizedHttpMessage, internalErrorHttpMessage, statusOkHttpMessage} from "../../utils/statusCodeMessages";
 

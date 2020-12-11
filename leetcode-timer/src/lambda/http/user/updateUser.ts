@@ -10,7 +10,7 @@ import {
     unauthorizedHttpMessage
 } from "../../utils/statusCodeMessages";
 import {getUpdatedToken, tokenUpdateDeltaInSecs} from "../../utils/tokenManagement";
-import {updateItem} from "../../db/basicTableOperations";
+import {updateItem} from "../../dao/tableOperations";
 import {usersTable} from "../../utils/exportConfig";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 

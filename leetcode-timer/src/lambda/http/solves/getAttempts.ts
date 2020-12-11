@@ -10,7 +10,7 @@ import {
 } from "../../utils/statusCodeMessages";
 import {solvesTable} from "../../utils/exportConfig";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
-import {getWithProjection} from "../../db/basicTableOperations";
+import {getWithProjection} from "../../dao/tableOperations";
 import {getUpdatedToken} from "../../utils/tokenManagement";
 import {tokenUpdateDeltaInSecs} from "../../utils/tokenManagement";
 

@@ -9,7 +9,7 @@ import {
     statusOkHttpMessageObject
 } from "../../utils/statusCodeMessages";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
-import {getMethod} from "../../db/basicTableOperations";
+import {getMethod} from "../../dao/tableOperations";
 import {usersTable} from "../../utils/exportConfig";
 import {getUpdatedToken} from "../../utils/tokenManagement";
 import {tokenUpdateDeltaInSecs} from "../../utils/tokenManagement";

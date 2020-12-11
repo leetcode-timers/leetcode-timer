@@ -12,7 +12,7 @@ import {JWTSignOptions} from "../../utils/tokenManagement";
 import {privateKey, usersTable} from "../../utils/exportConfig";
 import {JwtToken} from "../../../models/JwtToken";
 import {middify} from "../../utils/commonHandlers";
-import {getMethod, putMethod} from "../../db/basicTableOperations";
+import {getMethod, putMethod} from "../../dao/tableOperations";
 import {v4 as uuidv4} from 'uuid';
 
 let createAccount =
