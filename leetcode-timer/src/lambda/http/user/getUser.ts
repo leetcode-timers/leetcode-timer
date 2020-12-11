@@ -6,7 +6,6 @@ import {middify} from "../../utils/commonHandlers";
 import {
     internalErrorHttpMessage,
     notFoundHttpMessage,
-    // unauthorizedHttpMessage,
     statusOkHttpMessageObject
 } from "../../utils/statusCodeMessages";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
