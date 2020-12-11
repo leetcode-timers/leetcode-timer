@@ -75,7 +75,7 @@ functions:
     events:
       - http:
           method: get
-          path: users/{userId}
+          path: users/me
           cors: true
           authorizer: authJWT
   deleteUser:

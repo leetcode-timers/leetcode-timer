@@ -6,7 +6,7 @@ import {middify} from "../../utils/commonHandlers";
 import {
     internalErrorHttpMessage,
     notFoundHttpMessage,
-    unauthorizedHttpMessage,
+    // unauthorizedHttpMessage,
     statusOkHttpMessageObject
 } from "../../utils/statusCodeMessages";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
@@ -20,13 +20,8 @@ let dashboard =
         try {
             console.log('Processing: ', event);
 
-            let email: string = event.pathParameters.userId;
             let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
-
-            // Logged in user and user whose resource is accessed are different
-            if (email !== principalObject['email']) {
-                return unauthorizedHttpMessage("Tch, tch. Don't ask about someone else's account.")
-            }
+            let email: string = principalObject['email']
 
             let emailInTable: DocumentClient.GetItemOutput = await getMethod(usersTable, {
                 email: email
