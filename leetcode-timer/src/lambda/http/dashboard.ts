@@ -4,7 +4,7 @@ import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import 'source-map-support/register';
 import {middify} from "../utils/commonHandlers";
 import {badRequestHttpMessage} from "../utils/statusCodeMessages";
-import {getUpdatedToken} from "../utils/tokenManagement";
+import {getUpdatedToken, tokenUpdateDeltaInSecs} from "../utils/tokenManagement";
 
 let dashboard =
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -21,7 +21,8 @@ let dashboard =
             };
         } catch (e) {
             console.log("Error in dashboard: ", e.message);
-            return badRequestHttpMessage("Error in dashboard")
+            return badRequestHttpMessage("Error in dashboard",
+                getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
         }
     }
 

@@ -43,7 +43,10 @@ let person_with_invalid_email = {
   'name': 'Nachiket Dhamankar',
   'joinedAt': get_current_time_in_utc_seconds()
 }
+let sample_jwt = 'eyJhbGciOiJSasfUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuc2QxQGdvb2dsZS5jb20iLCJpYXQiOjE1OTM0MDQ1OTgsImV4cCI6MTU5MzQwNDcxOH0.2sPDz6U40wm0P63MGWMu9etA3InQfR5odovKxNTXe48USw1ta3kTJJo1Nj2rVYhzUN-54HkDoakseWwwjSF0qw'
+
 module.exports = {
+  sample_jwt,
   person1,
   person1_wrong_password,
   person_without_email,

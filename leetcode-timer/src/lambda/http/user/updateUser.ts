@@ -20,20 +20,25 @@ let dashboard =
             let userId: string = event.pathParameters.userId;
             let infoToUpdate = JSON.parse(event.body);
             console.log("Updating " + userId + " information: " + JSON.stringify(infoToUpdate))
+            let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
 
             // Logged in user and cookie don't match
-            let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
             if (userId !== principalObject['email']) {
-                return unauthorizedHttpMessage("Tch, tch. Attempting to update other user's info. Please check the email and credentials.")
+                return unauthorizedHttpMessage("Tch, tch. Attempting to update other user's info." +
+                    " Please check the email and credentials.",
+                    getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
             }
 
             if (Object.keys(infoToUpdate).length > 1 || Object.keys(infoToUpdate).length < 1) {
-                return badRequestHttpMessage("Error in update: Please update 1 field!")
+                return badRequestHttpMessage("Error in update: Please update 1 field!",
+                    getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
             }
 
-            if (infoToUpdate.hasOwnProperty('email') || infoToUpdate.hasOwnProperty('id') || infoToUpdate.hasOwnProperty('joinedAt')) {
+            if (infoToUpdate.hasOwnProperty('email') || infoToUpdate.hasOwnProperty('id')
+                || infoToUpdate.hasOwnProperty('joinedAt')) {
                 console.log("Illegal")
-                return badRequestHttpMessage("Illegal update field. Please update legal values only.")
+                return badRequestHttpMessage("Illegal update field. Please update legal values only.",
+                    getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
             }
 
             let result: object;
@@ -55,7 +60,8 @@ let dashboard =
 
         } catch (e) {
             console.log("Error in updateUser: ", e.message);
-            return internalErrorHttpMessage("Error while updating user info")
+            return internalErrorHttpMessage("Error while updating user info",
+                getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
         }
     }
 

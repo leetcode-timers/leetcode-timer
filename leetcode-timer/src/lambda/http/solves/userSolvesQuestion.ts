@@ -30,7 +30,9 @@ let dashboard =
             // Logged in user and cookie don't match
             let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
             if (userId !== principalObject['email']) {
-                return unauthorizedHttpMessage("Tch, tch. Request to add attempt to another user. Please check the email and credentials.")
+                return unauthorizedHttpMessage("Tch, tch. Request to add attempt to another user. " +
+                    "Please check the email and credentials.",
+                    getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
             }
 
             if (await isQuestionAttempted(userId, questionId)) {
@@ -40,7 +42,8 @@ let dashboard =
             }
         } catch (e) {
             console.log("Error in solving the problem. Try again: ", e.message);
-            return internalErrorHttpMessage("Error in dashboard")
+            return internalErrorHttpMessage("Error in dashboard",
+                getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
         }
     }
 
@@ -63,7 +66,8 @@ let solveFirstAttempt = async (userId: string, questionId: string, userAttempt: 
             message: "Attempt Successfully recorded: " + JSON.stringify(userAttempt)
         }, getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
     } catch (e) {
-        return internalErrorHttpMessage("Error in putting the attempt. Try again.");
+        return internalErrorHttpMessage("Error in putting the attempt. Try again.",
+            getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs));
     }
 }
 
@@ -78,7 +82,8 @@ let addAttempt = async (userId: string, questionId: string, userAttempt: any, ev
             message: "Attempt Successfully recorded: " + JSON.stringify(userAttempt)
         }, getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
     } catch (e) {
-        return internalErrorHttpMessage("Error in adding this attempt. Try again.");
+        return internalErrorHttpMessage("Error in adding this attempt. Try again.",
+            getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs));
     }
 
 }

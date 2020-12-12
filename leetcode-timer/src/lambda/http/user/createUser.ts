@@ -5,12 +5,16 @@ import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 import 'source-map-support/register';
 
 import {errorInPut} from "../../utils/constants";
-import {badRequestHttpMessage, internalErrorHttpMessage} from "../../utils/statusCodeMessages";
+import {
+    badRequestHttpMessage,
+    createdStatusHttpMessage,
+    internalErrorHttpMessage, unauthorizedHttpMessage
+} from "../../utils/statusCodeMessages";
 import {createAccountBody} from "../../../models/validators/user/createAccountValidator";
 import {sign} from 'jsonwebtoken';
-import {JWTSignOptions} from "../../utils/tokenManagement";
+import {JWTSignOptions, tokenUpdateDeltaInSecs} from "../../utils/tokenManagement";
+import {getUpdatedToken} from "../../utils/tokenManagement";
 import {privateKey, usersTable} from "../../utils/exportConfig";
-import {JwtToken} from "../../../models/JwtToken";
 import {middify} from "../../utils/commonHandlers";
 import {getMethod, putMethod} from "../../dao/tableOperations";
 import {v4 as uuidv4} from 'uuid';
@@ -39,7 +43,7 @@ let createAccount =
                     });
                     return sendSuccessToken(jwtSub, "User logged in successfully.");
                 } else {
-                    return incorrectPassword();
+                    return incorrectPassword("Incorrect password");
                 }
             }
             // Email does not exist in the table
@@ -47,10 +51,12 @@ let createAccount =
                 const uuid = uuidv4();
                 try {
                     if (name === undefined || name === null) {
-                        return badRequestHttpMessage("Attempting to create user without name")
+                        return badRequestHttpMessage("Attempting to create user without name",
+                            getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
                     }
-                    if ( joinedAt === undefined || joinedAt === null){
-                        return badRequestHttpMessage("Attempting to create user without joinedAt")
+                    if (joinedAt === undefined || joinedAt === null) {
+                        return badRequestHttpMessage("Attempting to create user without joinedAt",
+                            getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
                     }
                     await putMethod(usersTable, {
                         id: uuid,
@@ -61,7 +67,8 @@ let createAccount =
                     })
                 } catch (e) {
                     console.log("Error in createUserByEmail: ", e.message)
-                    return internalErrorHttpMessage(errorInPut("User"));
+                    return internalErrorHttpMessage(errorInPut("User"),
+                        getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs));
                 }
                 let jwtSub = JSON.stringify({
                     id: uuid,
@@ -71,28 +78,18 @@ let createAccount =
             }
         } catch (e) {
             console.log("Error while creating User: ", e.message)
-            return internalErrorHttpMessage("Error while creating user. Please try again.")
+            return internalErrorHttpMessage("Error while creating user. Please try again.",
+                getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
         }
     }
 
 function sendSuccessToken(subject: string, message: string): APIGatewayProxyResult {
-    const jwt = sign({sub: subject}, privateKey, JWTSignOptions) as JwtToken
-    return {
-        statusCode: 201,
-        body: JSON.stringify({
-            message: message,
-            token: jwt
-        })
-    };
+    const jwt = sign({sub: subject}, privateKey, JWTSignOptions)
+    return createdStatusHttpMessage(message, jwt)
 }
 
-function incorrectPassword(): APIGatewayProxyResult {
-    return {
-        statusCode: 401,
-        body: JSON.stringify({
-            message: "Incorrect password"
-        })
-    };
+function incorrectPassword(message: string): APIGatewayProxyResult {
+    return unauthorizedHttpMessage(message, '')
 }
 
 export const handler = middify(createAccount, {inputSchema: createAccountBody});

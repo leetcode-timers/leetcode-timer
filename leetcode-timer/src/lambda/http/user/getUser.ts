@@ -29,11 +29,13 @@ let dashboard =
                 return statusOkHttpMessageObject(emailInTable.Item,
                     getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs));
             }
-            return notFoundHttpMessage("Given user not found.");
+            return notFoundHttpMessage("Given user not found.",
+                getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs));
 
         } catch (e) {
             console.log("Error in getUser: ", e.message);
-            return internalErrorHttpMessage("Error in getUser")
+            return internalErrorHttpMessage("Error in getUser",
+                getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
         }
     }
 

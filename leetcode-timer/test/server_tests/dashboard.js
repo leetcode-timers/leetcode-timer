@@ -2,7 +2,7 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const should = chai.should()
 const version = 'v1'
-const endpoint = 'https://9pxxkr2kv6.execute-api.us-east-1.amazonaws.com/'
+const endpoint = 'https://7iagginygl.execute-api.us-east-1.amazonaws.com/'
 const url = endpoint + version
 const create_token = 123
 chai.use(chaiHttp)
@@ -85,7 +85,7 @@ describe('Users Endpoint', () => {
     it('should not display dashboard', async () => {
       let res = await chai.request(url)
         .get('/dashboard')
-        .set('Authorization', 'Bearer ' + sample_jwt)
+        .set('Authorization', 'Bearer ' + test_info.sample_jwt)
       res.status.should.eq(status_codes.forbidden_status_code)
     })
 
@@ -157,13 +157,9 @@ describe('Users Endpoint', () => {
         .set('Authorization', 'Bearer ' + recd_token)
         .send()
       res.should.have.status(status_codes.ok_status_code)
-      res.body.result.email.should.eq(test_info.person1.email)
-      res.body.result.name.should.eq(test_info.person1.name)
-      res.body.result.password.should.eq(test_info.person1.password)
-
+      res.body.body.email.should.eq(test_info.person1.email)
+      res.body.body.name.should.eq(test_info.person1.name)
+      res.body.body.password.should.eq(test_info.person1.password)
     })
   })
-
 })
-
-const sample_jwt = 'eyJhbGciOiJSasfUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuc2QxQGdvb2dsZS5jb20iLCJpYXQiOjE1OTM0MDQ1OTgsImV4cCI6MTU5MzQwNDcxOH0.2sPDz6U40wm0P63MGWMu9etA3InQfR5odovKxNTXe48USw1ta3kTJJo1Nj2rVYhzUN-54HkDoakseWwwjSF0qw'

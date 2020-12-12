@@ -29,7 +29,9 @@ let dashboard =
             // Logged in user and cookie don't match
             let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
             if (userId !== principalObject['email']) {
-                return unauthorizedHttpMessage("Tch, tch. Request to get another user's attempts. Please check the email and credentials.")
+                return unauthorizedHttpMessage("Tch, tch. Request to get another user's attempts. " +
+                    "Please check the email and credentials.",
+                    getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
             }
 
             const result: DocumentClient.GetItemOutput = await getWithProjection(solvesTable, {
@@ -43,7 +45,8 @@ let dashboard =
 
         } catch (e) {
             console.log("Error in getting the attempts. Try again: ", e.message);
-            return internalErrorHttpMessage("Error in getting attempts")
+            return internalErrorHttpMessage("Error in getting attempts",
+                getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
         }
     }
 

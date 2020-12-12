@@ -29,7 +29,9 @@ let dashboard =
             // Logged in user and cookie don't match
             let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
             if (userId !== principalObject['email']) {
-                return unauthorizedHttpMessage("Tch, tch. Request to get another user's attempted questions. Please check the email and credentials.")
+                return unauthorizedHttpMessage("Tch, tch. Request to get another user's attempted questions. " +
+                    "Please check the email and credentials.",
+                    getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
             }
 
             const docClient = new AWS.DynamoDB.DocumentClient();
@@ -51,7 +53,8 @@ let dashboard =
 
         } catch (e) {
             console.log("Error in getting the questions. Try again: ", e.message);
-            return internalErrorHttpMessage("Error in questions")
+            return internalErrorHttpMessage("Error in questions",
+                getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
         }
     }
 
