@@ -28,7 +28,7 @@ let dashboard =
 
             // Logged in user and cookie don't match
             let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
-            if (userId !== principalObject['email']) {
+            if (userId !== principalObject['id']) {
                 return unauthorizedHttpMessage("Tch, tch. Request to get another user's attempted questions. " +
                     "Please check the email and credentials.",
                     getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))

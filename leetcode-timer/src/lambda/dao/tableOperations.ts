@@ -10,6 +10,21 @@ let scanTable = async (tableName: string, limit: number): Promise<DocumentClient
     }).promise();
 };
 
+let queryGlobalSecondaryIndex = async (tableName: string, indexName: string, attributeName: string,
+                                       attributeVal: string): Promise<DocumentClient.QueryOutput> => {
+    return await docClient.query({
+        TableName: tableName,
+        IndexName: indexName,
+        KeyConditionExpression: "#attributeName = :attributeVal",
+        ExpressionAttributeNames: {
+            '#attributeName': attributeName
+        },
+        ExpressionAttributeValues: {
+            ":attributeVal": attributeVal
+        }
+    }).promise();
+}
+
 let putMethod = async (tableName: string, item: object): Promise<DocumentClient.PutItemOutput> => {
     return await docClient.put({
         TableName: tableName,
@@ -70,6 +85,7 @@ let appendToList = async (tableName: string, key: object, attriName: string, att
 
 export {
     scanTable,
+    queryGlobalSecondaryIndex,
     putMethod,
     getMethod,
     getWithProjection,

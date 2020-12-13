@@ -46,6 +46,15 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.SOLVES_TABLE}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:us-east-1:563251362347:table/Users-v1/index/UserEmailIndex
 
 functions:
   auth:
@@ -75,7 +84,7 @@ functions:
     events:
       - http:
           method: get
-          path: users/me
+          path: users/{userId}
           cors: true
           authorizer: authJWT
   deleteUser:
@@ -100,7 +109,7 @@ functions:
     events:
       - http:
           method: post
-          path: users/{userId}/question/{questionId}
+          path: users/{userId}/questions/{questionId}
           cors: true
           authorizer: authJWT
   getAttemptedQuestions:
@@ -138,11 +147,20 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
           - AttributeName: email
             AttributeType: S
         KeySchema:
-          - AttributeName: email
+          - AttributeName: id
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserEmailIndex
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.USERS_TABLE}
     SolvesDynamoDBTable:

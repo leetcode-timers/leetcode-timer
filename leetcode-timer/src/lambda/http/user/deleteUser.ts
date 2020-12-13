@@ -16,19 +16,19 @@ let dashboard =
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
         try {
             console.log('Processing: ', event);
-            let email: string = event.pathParameters.userId;
+            let id: string = event.pathParameters.userId;
 
             let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
 
             // Logged in user and user whose account is to be deleted are different
-            if (email !== principalObject['email']) {
+            if (id !== principalObject['id']) {
                 return unauthorizedHttpMessage("Tch, tch. Don't delete someone else's account.",
                     getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
             }
 
             try {
                 await deleteMethod(usersTable, {
-                    email: email
+                    id: id
                 });
                 return statusOkHttpMessage("User has been successfully deleted.",
                     getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))

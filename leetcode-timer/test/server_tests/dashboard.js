@@ -2,7 +2,7 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const should = chai.should()
 const version = 'v1'
-const endpoint = 'https://7iagginygl.execute-api.us-east-1.amazonaws.com/'
+const endpoint = 'https://o0tbd1isti.execute-api.us-east-1.amazonaws.com/'
 const url = endpoint + version
 const create_token = 123
 chai.use(chaiHttp)
@@ -135,7 +135,7 @@ describe('Users Endpoint', () => {
 
   describe('Get User Info', () => {
     let recd_token
-
+    let userId
     before(async () => {
       let res = await chai.request(url)
         .post('/users')
@@ -144,6 +144,7 @@ describe('Users Endpoint', () => {
       res.should.have.status(status_codes.created_status_code)
       let message = JSON.parse(res.text)
       recd_token = message.token
+      userId = message.body.id
 
       res = await chai.request(url)
         .get('/dashboard')
@@ -153,7 +154,7 @@ describe('Users Endpoint', () => {
 
     it('should return user info successfully', async () => {
       let res = await chai.request(url)
-        .get('/users/me')
+        .get('/users/' + userId)
         .set('Authorization', 'Bearer ' + recd_token)
         .send()
       res.should.have.status(status_codes.ok_status_code)
@@ -161,5 +162,6 @@ describe('Users Endpoint', () => {
       res.body.body.name.should.eq(test_info.person1.name)
       res.body.body.password.should.eq(test_info.person1.password)
     })
+
   })
 })

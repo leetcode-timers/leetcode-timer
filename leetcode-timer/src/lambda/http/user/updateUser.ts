@@ -23,7 +23,7 @@ let dashboard =
             let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
 
             // Logged in user and cookie don't match
-            if (userId !== principalObject['email']) {
+            if (userId !== principalObject['id']) {
                 return unauthorizedHttpMessage("Tch, tch. Attempting to update other user's info." +
                     " Please check the email and credentials.",
                     getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
@@ -45,7 +45,7 @@ let dashboard =
 
             for (let [key, value] of Object.entries(infoToUpdate)) {
                 const new_values: DocumentClient.UpdateItemOutput = await updateItem(usersTable, {
-                    email: userId
+                    id: userId
                 }, key, '' + value, 'ALL_NEW')
 
                 console.log(JSON.stringify(new_values))

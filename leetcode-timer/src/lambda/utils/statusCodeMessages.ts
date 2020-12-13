@@ -50,13 +50,13 @@ function statusOkHttpMessage(message: string, token: string): APIGatewayProxyRes
     }
 }
 
-function createdStatusHttpMessage(message: string, token: string): APIGatewayProxyResult {
+function createdStatusHttpMessageObject(returnObject: object, token: string): APIGatewayProxyResult {
     return {
         statusCode: 201,
         body: JSON.stringify({
             token: token,
-            body: message
-        })
+            body: returnObject
+        }, null, 2)
     }
 }
 
@@ -73,7 +73,7 @@ function statusOkHttpMessageObject(returnObject: object, token: string): APIGate
 
 
 export {
-    createdStatusHttpMessage,
+    createdStatusHttpMessageObject,
     internalErrorHttpMessage,
     unauthorizedHttpMessage,
     badRequestHttpMessage,

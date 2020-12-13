@@ -6,7 +6,7 @@ import {middify} from "../../utils/commonHandlers";
 import {
     internalErrorHttpMessage,
     notFoundHttpMessage,
-    statusOkHttpMessageObject
+    statusOkHttpMessageObject, unauthorizedHttpMessage
 } from "../../utils/statusCodeMessages";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 import {getMethod} from "../../dao/tableOperations";
@@ -18,12 +18,19 @@ let dashboard =
     async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
         try {
             console.log('Processing: ', event);
-
+            let userId: string = event.pathParameters.userId;
             let principalObject: object = JSON.parse(event.requestContext.authorizer.principalId);
-            let email: string = principalObject['email']
+            let id: string = principalObject['id']
+
+            // Logged in user and cookie don't match
+            if (userId !== principalObject['id']) {
+                return unauthorizedHttpMessage("Tch, tch. Attempting to get other user's info." +
+                    " Please check the email and credentials.",
+                    getUpdatedToken(event.headers.Authorization, tokenUpdateDeltaInSecs))
+            }
 
             let emailInTable: DocumentClient.GetItemOutput = await getMethod(usersTable, {
-                email: email
+                id: id
             });
             if (emailInTable.Item !== undefined && emailInTable.Item !== null) {
                 return statusOkHttpMessageObject(emailInTable.Item,

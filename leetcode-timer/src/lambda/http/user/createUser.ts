@@ -7,7 +7,7 @@ import 'source-map-support/register';
 import {errorInPut} from "../../utils/constants";
 import {
     badRequestHttpMessage,
-    createdStatusHttpMessage,
+    createdStatusHttpMessageObject,
     internalErrorHttpMessage, unauthorizedHttpMessage
 } from "../../utils/statusCodeMessages";
 import {createAccountBody} from "../../../models/validators/user/createAccountValidator";
@@ -16,7 +16,7 @@ import {JWTSignOptions, tokenUpdateDeltaInSecs} from "../../utils/tokenManagemen
 import {getUpdatedToken} from "../../utils/tokenManagement";
 import {privateKey, usersTable} from "../../utils/exportConfig";
 import {middify} from "../../utils/commonHandlers";
-import {getMethod, putMethod} from "../../dao/tableOperations";
+import {putMethod, queryGlobalSecondaryIndex} from "../../dao/tableOperations";
 import {v4 as uuidv4} from 'uuid';
 
 let createAccount =
@@ -30,18 +30,19 @@ let createAccount =
             let name: string = body['name'];
             let joinedAt: string = body['joinedAt'];
 
-            let emailInTable: DocumentClient.GetItemOutput = await getMethod(usersTable, {
-                email: email
-            });
+            let emailInTable: DocumentClient.QueryOutput = await queryGlobalSecondaryIndex(usersTable,
+                'UserEmailIndex', 'email', email);
 
-            // Email already exists in the table
-            if (emailInTable.Item !== undefined && emailInTable.Item !== null) {
-                if (emailInTable.Item['password'] === password) {
+            if (emailInTable != null && emailInTable.Items.length > 0 && emailInTable.Items[0] != null && emailInTable.Items[0] != undefined) {
+                if (emailInTable.Items[0]['password'] === password) {
                     let jwtSub = JSON.stringify({
-                        id: emailInTable.Item['id'],
-                        email: emailInTable.Item['email']
+                        id: emailInTable.Items[0]['id'],
+                        email: emailInTable.Items[0]['email']
                     });
-                    return sendSuccessToken(jwtSub, "User logged in successfully.");
+                    return sendSuccessToken(jwtSub, {
+                        id: emailInTable.Items[0]['id'],
+                        message: "User logged in successfully."
+                    });
                 } else {
                     return incorrectPassword("Incorrect password");
                 }
@@ -74,7 +75,10 @@ let createAccount =
                     id: uuid,
                     email: email
                 });
-                return sendSuccessToken(jwtSub, "User created successfully.");
+                return sendSuccessToken(jwtSub, {
+                    id: uuid,
+                    message: "User created successfully."
+                });
             }
         } catch (e) {
             console.log("Error while creating User: ", e.message)
@@ -83,9 +87,10 @@ let createAccount =
         }
     }
 
-function sendSuccessToken(subject: string, message: string): APIGatewayProxyResult {
+function sendSuccessToken(subject: string, returnObject: object): APIGatewayProxyResult {
     const jwt = sign({sub: subject}, privateKey, JWTSignOptions)
-    return createdStatusHttpMessage(message, jwt)
+    return createdStatusHttpMessageObject(returnObject, jwt)
+
 }
 
 function incorrectPassword(message: string): APIGatewayProxyResult {
