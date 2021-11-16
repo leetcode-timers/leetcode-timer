@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.56",
     "@types/node": "^10.17.26",
-    "aws-sdk": "^2.703.0",
+    "aws-sdk": "^2.814.0",
     "chai": "^4.2.0",
     "fork-ts-checker-webpack-plugin": "^3.0.1",
     "serverless": "^1.73.1",
